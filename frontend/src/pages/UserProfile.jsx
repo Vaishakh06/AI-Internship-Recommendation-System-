@@ -17,8 +17,8 @@ const UserProfile = () => {
     });
 
     const { fullName, skills, education, experience, portfolioLink, resumeLink } = formData;
-    const API_BASE = 'http://localhost:8080/api/users';
-
+    const API_BASE = import.meta.env.VITE_API_URL;
+    
     useEffect(() => {
         if (user && token) {
             const fetchProfile = async () => {
