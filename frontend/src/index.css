@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/* Custom Variants */
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant blue (&:where(.blue, .blue *));
+
+html,
+body {
+  background-color: #171c1c;
+}
+
+button {
+  will-change: scale; /* To remove the flickering while hover */
+}
+
+/* Global Variables */
+:root {
+  --primary-text-muted: gray;
+}
+
+/* Custom Scrollbar Styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
