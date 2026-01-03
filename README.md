@@ -17,7 +17,6 @@ An intelligent internship discovery platform built with the **MERN Stack** and *
 - **🧠 Semantic Matching:** Uses Google Gemini to analyze resumes/skills and match them with internship descriptions based on meaning.
 - **🔐 Secure Authentication:** Role-based login (Student/Admin) with hashed passwords.
 - **📧 Email Verification:** Account activation system using unique token links.
-- **📄 Resume Analysis:** Extracts skills and interests automatically from student inputs.
 - **⚡ Admin Dashboard:** Interface for recruiters/admins to post internships.
 - **📱 Responsive UI:** Dark-themed, mobile-friendly interface.
 
@@ -48,18 +47,6 @@ The repository is organized into a monorepo structure separating the client and 
 │
 └── README.md               # Project Documentation
 
-## 👥 Project Team
-
-**Dept. of Computer Science and Business Systems (CSBS)**
-**BMS Institute of Technology and Management, Bengaluru**
-
-| Role | Name |
-| :--- | :--- |
-| **Team Member** | Geethanjali BS |
-| **Team Member** | P Madhavi Reddy |
-| **Team Member** | Shivang Karol |
-| **Team Member** | Vaishakh Pavan Ganesh R |
-| **Project Guide** | Dr. R Jennie Bharathi (Asst. Professor) |
 
 ## ⚙️ Environment Setup
 
