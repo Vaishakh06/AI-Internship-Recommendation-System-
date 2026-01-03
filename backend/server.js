@@ -28,7 +28,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",                 // Trust Localhost (Local Testing)
-    process.env.FRONTEND_URL                 // Trust Vercel URL (Deployment)
+    "https://ai-internship-recommendation-system.vercel.app"                 // Trust Vercel URL (Deployment)
   ],
   credentials: true
 }));
