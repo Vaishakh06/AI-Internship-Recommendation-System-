@@ -13,11 +13,18 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 // 📧 Email Transporter
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: 'smtp.gmail.com',     // Explicitly set host
+    port: 587,                  // Use Port 587 (Best for cloud servers)
+    secure: false,              // False for port 587 (it uses STARTTLS)
+    requireTLS: true,           // Enforce security
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, // Your 16-char App Password
+        user: process.env.email,
+        pass: process.env.password
     },
+    // Fix for some certificate issues in cloud environments
+    tls: {
+        ciphers: 'SSLv3'
+    }
 });
 
 /* ======================================================
