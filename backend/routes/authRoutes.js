@@ -23,7 +23,7 @@ const transporter = nodemailer.createTransport({
     },
     // Fix for some certificate issues in cloud environments
     tls: {
-        ciphers: 'SSLv3'
+        rejectUnauthorized: false
     }
 });
 
