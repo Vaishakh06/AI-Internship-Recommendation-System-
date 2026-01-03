@@ -18,12 +18,12 @@ const UserProfile = () => {
 
     const { fullName, skills, education, experience, portfolioLink, resumeLink } = formData;
     const API_BASE = import.meta.env.VITE_API_URL;
-    
+
     useEffect(() => {
         if (user && token) {
             const fetchProfile = async () => {
                 try {
-                    const res = await axios.get(`${API_BASE}/profile`, {
+                    const res = await axios.get(`${API_BASE}/api/users/profile`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
 
@@ -92,7 +92,7 @@ const UserProfile = () => {
         e.preventDefault();
         try {
             await axios.post(
-                `${API_BASE}/profile`,
+                `${API_BASE}/api/users/profile`,
                 formData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
