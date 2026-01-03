@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 // ✅ 1. Define your Backend URL here (so it's easy to change later)
 // Copy this from your ngrok terminal (http 8080)
-const BACKEND_URL = "https://karla-loquacious-uncapaciously.ngrok-free.dev";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({

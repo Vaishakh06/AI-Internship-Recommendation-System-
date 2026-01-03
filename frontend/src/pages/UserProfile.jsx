@@ -7,51 +7,34 @@ import { toast } from 'react-toastify';
 const UserProfile = () => {
     const { user, token, loading } = useAuth();
 
-    // --- Updated State ---
     const [formData, setFormData] = useState({
         fullName: '',
         skills: '',
         education: { university: '', degree: '', graduationYear: '' },
-        experience: [], // Array for experience entries
+        experience: [],
         portfolioLink: '',
         resumeLink: '',
     });
 
     const { fullName, skills, education, experience, portfolioLink, resumeLink } = formData;
-
     const API_BASE = 'http://localhost:8080/api/users';
 
-    // Load profile data
-    // Inside UserProfile.jsx
-
     useEffect(() => {
-        // Only run if the user data and token are loaded
         if (user && token) {
             const fetchProfile = async () => {
                 try {
-                    console.log("Fetching profile..."); // Log start
                     const res = await axios.get(`${API_BASE}/profile`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
 
-                    // --- Log the raw data received ---
-                    console.log("Raw profile data received:", res.data);
-                    // ---------------------------------
+                    if (!res.data) return;
 
-                    if (!res.data) {
-                        console.error("Received empty data from backend!");
-                        toast.error("Could not load profile data.");
-                        return; // Stop if data is empty
-                    }
-
-                    // Ensure defaults for potentially missing fields
                     const profileData = res.data;
                     const fetchedEducation = profileData.education || {};
                     const fetchedExperience = Array.isArray(profileData.experience) ? profileData.experience : [];
                     const fetchedSkills = Array.isArray(profileData.skills) ? profileData.skills.join(', ') : '';
 
-                    // Prepare the state update
-                    const newState = {
+                    setFormData({
                         fullName: profileData.fullName || '',
                         skills: fetchedSkills,
                         education: {
@@ -62,13 +45,7 @@ const UserProfile = () => {
                         experience: fetchedExperience,
                         portfolioLink: profileData.portfolioLink || '',
                         resumeLink: profileData.resumeLink || '',
-                    };
-
-                    // --- Log the state we are about to set ---
-                    console.log("Setting form data state:", newState);
-                    // -----------------------------------------
-
-                    setFormData(newState); // Update the form state
+                    });
 
                 } catch (err) {
                     console.error('Failed to fetch profile', err);
@@ -77,15 +54,12 @@ const UserProfile = () => {
             };
             fetchProfile();
         }
-        // Make sure dependencies are correct
     }, [user, token]);
 
-    // Handle standard input changes
     const onChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Handle education changes
     const onEducationChange = (e) => {
         setFormData({
             ...formData,
@@ -93,7 +67,6 @@ const UserProfile = () => {
         });
     };
 
-    // --- Functions to manage Experience array ---
     const addExperience = () => {
         setFormData({
             ...formData,
@@ -114,9 +87,7 @@ const UserProfile = () => {
             experience: formData.experience.filter((_, i) => i !== index)
         });
     };
-    // ------------------------------------------
 
-    // Save profile data
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -212,7 +183,7 @@ const UserProfile = () => {
                                     className="absolute top-2 right-2 text-red-500 hover:text-red-400"
                                     title="Remove Experience"
                                 >
-                                    &times; {/* Simple 'X' icon */}
+                                    &times;
                                 </button>
                             </div>
                         ))}
@@ -230,17 +201,16 @@ const UserProfile = () => {
                         <h2 className="text-xl font-semibold text-yellow-400 mb-4 border-b border-gray-700 pb-2">Links</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className={labelStyle}>Portfolio Link (e.g., GitHub, Behance)</label>
+                                <label className={labelStyle}>Portfolio Link</label>
                                 <input type="url" name="portfolioLink" value={portfolioLink} onChange={onChange} className={inputStyle} placeholder="https://..." />
                             </div>
                             <div>
-                                <label className={labelStyle}>Resume Link (e.g., Google Drive, Dropbox)</label>
+                                <label className={labelStyle}>Resume Link</label>
                                 <input type="url" name="resumeLink" value={resumeLink} onChange={onChange} className={inputStyle} placeholder="https://..." />
                             </div>
                         </div>
                     </section>
 
-                    {/* --- Save Button --- */}
                     <button
                         type="submit"
                         className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-6 rounded-lg text-lg transition-colors mt-8"

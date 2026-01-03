@@ -1,97 +1,82 @@
-# PM Internship AI Recommendation Engine | pm-internship-ai
+# AI Internship Recommendation Portal 🚀
 
-This project is an **AI-powered Internship Recommendation Portal** built for the PM Internship Scheme. It matches students to the most suitable government-backed internships based on their skills, interests, and backgrounds, providing a personalized, transparent, and scalable experience.
+An intelligent internship discovery platform built with the **MERN Stack** and **Google Gemini**. This system uses Generative AI to perform semantic matching between student profiles and internship opportunities, going beyond simple keyword matching to understand context and intent.
 
 ## 🏗️ Tech Stack
 
-- **Frontend:** React (Next.js), Tailwind CSS, Axios
-- **Backend:** Node.js, Express, Gemini API (for skill extraction and recommendations), JWT Auth
-- **Database:** MongoDB Atlas (Free Tier for demo)
-- **Deployment:** Vercel (frontend), Render/Heroku (backend)
+- **Frontend:** React.js (Vite), Tailwind CSS, Axios
+- **Backend:** Node.js, Express.js
+- **AI Engine:** Google Gemini Pro Model (for semantic analysis & matching)
+- **Database:** MongoDB Atlas
+- **Authentication:** JWT (JSON Web Tokens) + Bcrypt
+- **Email Service:** Nodemailer (Gmail SMTP)
+- **Deployment:** Vercel (Frontend) & Render (Backend)
 
-## 🚀 Features
+## 🚀 Key Features
 
-- **🤖 AI Chatbot** - Gemini-powered chatbot for instant internship help and career advice
-- Secure login & registration for students and admins
-- Resume upload (PDF/DOCX) or manual skill/interest entry
-- AI-based skills & interest extraction using Gemini API
-- Personalized internship recommendations with skill match score
-- Filters on domain, location, stipend, duration, skill match %
-- Admin panel to add/edit/manage internships
-- Edge case handling (missing skills, no matches, resume issues)
-- Analytics dashboard (optional)
-- Clean, intuitive interface for both students and admins
+- **🧠 Semantic Matching:** Uses Google Gemini to analyze resumes/skills and match them with internship descriptions based on meaning.
+- **🔐 Secure Authentication:** Role-based login (Student/Admin) with hashed passwords.
+- **📧 Email Verification:** Account activation system using unique token links.
+- **📄 Resume Analysis:** Extracts skills and interests automatically from student inputs.
+- **⚡ Admin Dashboard:** Interface for recruiters/admins to post internships.
+- **📱 Responsive UI:** Dark-themed, mobile-friendly interface.
 
-## 📊 Workflow
+## 📂 Project Structure
 
-1. **Student Side**
-   - Register/Login
-   - Upload resume or enter skills manually
-   - Receive AI-analyzed skills/interests and get ranked internship matches
-   - Dashboard displays matches with filters, match score, and "why matched" info
+The repository is organized into a monorepo structure separating the client and server logic:
 
-2. **Admin Side**
-   - Register/Login as admin
-   - Post and manage internships with required skills, duration, stipend, etc.
-   - Optional: view analytics on popular listings, trends
-
-3. **Backend & AI**
-   - Handles auth, stores student & internship data in MongoDB
-   - Integrates with Gemini API for resume parsing and semantic matching
-   - Returns top-fit internships based on student profile
-
-## 🤝 Team & Collaboration
-
-- **Frontend:** [Team member name(s)] — Student/admin dashboard, UI/UX, API integration
-- **Backend:** [Team member name(s)] — APIs, DB, Gemini integration, match logic
-- **Data Preparation & Testing:** [Names] — Mock data prep, edge case testing, demo support
-- **Presentation:** [Name] — Slides, live demo, documentation, project explanation
-
-Workflow uses GitHub issues/branches/pull requests for collaborative, transparent code development. Each team member commits to their respective module and collaborates on integration/testing.
-
-## 🧑‍💻 Getting Started
-
-👉 **For detailed setup instructions with the new AI Chatbot, see [RUN_INSTRUCTIONS.md](RUN_INSTRUCTIONS.md)**
-
-Quick Start:
-1. **Clone the repository**
-2. **Create `.env` file in `backend/` with:**
-   - `MONGO_URI` - Your MongoDB connection string
-   - `JWT_SECRET` - Any random secret string
-   - `GEMINI_API_KEY` - Your Gemini API key
-3. **Install dependencies:**
-   ```bash
-   cd backend && npm install
-   cd ../frontend && npm install
-   ```
-4. **Start the servers:**
-   ```bash
-   # Terminal 1 - Backend
-   cd backend && npm start
-   
-   # Terminal 2 - Frontend
-   cd frontend && npm run dev
-   ```
-5. **Open http://localhost:5173** and click the chatbot icon! 🤖
-
-## 📁 Directory Structure
-```
-pm-internship-ai-engine/
+```text
+/InternDesk-Project-Root/
 │
-├── frontend/
-│ └── ... (React app, component folders)
-├── backend/
-│ └── ... (Express app, routes, controllers)
-└── README.md
-```
+├── backend/                # Server-side logic (Node.js/Express)
+│   ├── config/             # DB connections & App config
+│   ├── controllers/        # Request logic (Auth, Internship, AI)
+│   ├── models/             # Mongoose Schemas (User, Internship)
+│   ├── routes/             # API Endpoints
+│   ├── utils/              # Helper functions & Middleware
+│   ├── server.js           # Entry point
+│   └── .env                # Secrets (GitIgnored)
+│
+├── frontend/               # Client-side logic (React + Vite)
+│   ├── src/
+│   │   ├── api/            # Axios setup & API calls
+│   │   ├── components/     # Reusable UI components
+│   │   ├── context/        # Global State (Auth Context)
+│   │   ├── pages/          # Full page views
+│   │   └── App.jsx         # Main Component
+│   └── vite.config.js      # Vite Configuration
+│
+└── README.md               # Project Documentation
 
-## 🌟 Contribution Guidelines
+## 👥 Project Team
 
-- Feature branches for major changes
-- Descriptive commit messages
-- Pull requests with code reviews before merge
-- Open issues for bugs/feature requests
+**Dept. of Computer Science and Business Systems (CSBS)**
+**BMS Institute of Technology and Management, Bengaluru**
 
----
+| Role | Name |
+| :--- | :--- |
+| **Team Member** | Geethanjali BS |
+| **Team Member** | P Madhavi Reddy |
+| **Team Member** | Shivang Karol |
+| **Team Member** | Vaishakh Pavan Ganesh R |
+| **Project Guide** | Dr. R Jennie Bharathi (Asst. Professor) |
 
-**Let’s empower students with transparent, AI-driven government internship opportunities!**
+## ⚙️ Environment Setup
+
+Create a `.env` file in your **backend** folder with the following keys:
+
+```env
+PORT=8080
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_random_secret_key
+email=your_email@gmail.com
+password=your_email_app_password
+GEMINI_API_KEY=your_google_gemini_key
+
+# 1. For Local Development:
+BACKEND_URL=http://localhost:8080
+FRONTEND_URL=http://localhost:5173
+
+# 2. For Cloud Deployment (Render/Vercel):
+# BACKEND_URL=[https://your-api.onrender.com](https://your-api.onrender.com)
+# FRONTEND_URL=[https://your-project.vercel.app](https://your-project.vercel.app)
