@@ -1,7 +1,7 @@
 // frontend/src/context/InternshipProvider.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { InternshipContext } from "./InternshipContext"; 
+import { InternshipContext } from "./InternshipContext";
 
 export const InternshipProvider = ({ children }) => {
   const [recommended, setRecommended] = useState([]);
@@ -12,9 +12,10 @@ export const InternshipProvider = ({ children }) => {
   const fetchInternships = async () => {
     try {
       setLoading(true);
-      
+
       // Change the URL to the public-facing "list" route
-      const res = await axios.get("http://localhost:8080/api/internships/list");
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/internships/list`);
+
       setInternships(res.data || []);
     } catch (err) {
       console.error("Error fetching internships:", err);
@@ -23,7 +24,7 @@ export const InternshipProvider = ({ children }) => {
     }
   };
 
-  
+
   const addInternship = async (data) => {
     // ... (this function won't work without a token) ...
   };
