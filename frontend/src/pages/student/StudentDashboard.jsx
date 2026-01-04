@@ -64,7 +64,7 @@ const InternshipCard = ({ internship, onViewDetails, isApplied }) => (
    Modal
 ======================= */
 
-const InternshipModal = ({ internship, activeTab, onClose, onApply, isApplied }) => (
+const InternshipModal = ({ internship, onClose, onApply, isApplied }) => (
   <div
     className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
     onClick={onClose}
@@ -85,24 +85,20 @@ const InternshipModal = ({ internship, activeTab, onClose, onApply, isApplied })
         <strong>Location:</strong> {internship.location}
       </p>
 
-      <p className="text-gray-400 mb-4">
-        {activeTab === "recommended" ? (
-          <>
-            <strong>Skills Matched:</strong>{" "}
-            {internship.skillsMatched?.length
-              ? internship.skillsMatched.join(", ")
-              : "N/A"}
-          </>
-        ) : (
-          <>
-            <strong>Skills Required:</strong>{" "}
-            {internship.skillsRequired?.length
-              ? internship.skillsRequired.join(", ")
-              : "Not specified"}
-          </>
-        )}
-      </p>
-
+      {/* ✅ SHOW SKILLS MATCHED ONLY FOR RECOMMENDATIONS */}
+      {internship.skillsMatched ? (
+        <p className="text-gray-400 mb-4">
+          <strong>Skills Matched:</strong>{" "}
+          {internship.skillsMatched.length > 0
+            ? internship.skillsMatched.join(", ")
+            : "N/A"}
+        </p>
+      ) : (
+        <p className="text-gray-400 mb-4">
+          <strong>Skills Required:</strong>{" "}
+          {internship.skillsRequired?.join(", ") || "Not specified"}
+        </p>
+      )}
 
       <div className="flex justify-between items-center">
         <button
@@ -126,6 +122,7 @@ const InternshipModal = ({ internship, activeTab, onClose, onApply, isApplied })
     </div>
   </div>
 );
+
 
 /* =======================
    Main Component
