@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -11,7 +10,6 @@ const LoginPage = ({ mode = "student" }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Redirect destination
   const from = location.state?.from?.pathname || "/";
 
   const handleChange = (e) => {
@@ -24,26 +22,22 @@ const LoginPage = ({ mode = "student" }) => {
     setLoading(true);
 
     try {
-      // Login user via AuthContext
       const loggedInUser = await login(formData.email, formData.password);
 
       if (!loggedInUser) {
-        throw new Error("Invalid credentials or email not verified.");
+        throw new Error("Invalid credentials.");
       }
 
-
-      // Navigate based on role
       const destination =
         loggedInUser.role === "admin"
           ? "/admin/dashboard"
           : "/student/dashboard";
+
       navigate(destination, { replace: true });
     } catch (err) {
       console.error("Login error:", err);
       setError(
-        err.response?.data?.message ||
-        err.message ||
-        "Login failed. Please try again."
+        err.message || "Login failed. Please try again."
       );
     } finally {
       setLoading(false);

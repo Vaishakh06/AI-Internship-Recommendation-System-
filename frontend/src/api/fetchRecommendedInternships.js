@@ -1,29 +1,28 @@
 import axios from "axios";
-import { toast } from "react-toastify"; 
+import { toast } from "react-toastify";
 
-export const fetchRecommenedInternships = async (email) => {
+export const fetchRecommendedInternships = async (email) => {
   try {
     const response = await toast.promise(
-      async () => {
-        const res = await axios.post(
-          `${import.meta.env.VITE_SERVER_URL}/api/internships/recommendations`,
-          email,
-          { headers: { "Content-Type": "application/json" } }
-        );
-        return res.data; // return only data here
-      },
+      axios.post(
+        `${import.meta.env.VITE_API_URL}/api/internships/recommendations`,
+        { email }, // ✅ send as JSON object
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      ),
       {
         pending: "🤖 AI is finding internships from the server...",
-        success:
-          "✅ AI has approved your request! Enjoy your internships...",
+        success: "✅ AI has approved your request! Enjoy your internships...",
         error: "❌ Something went wrong. Please try again.",
       }
     );
 
-    // console.log("Server response inside toast.promise:", response);
-    return response; // already the data
+    return response.data; // ✅ return only data
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching recommended internships:", err);
     return null;
   }
 };

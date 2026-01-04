@@ -1,24 +1,26 @@
-# AI Internship Recommendation Portal 🚀
+An intelligent internship discovery platform built using the **MERN Stack** and **Google Gemini AI**.  
+The system performs **semantic matching** between student profiles and internship opportunities, going beyond keyword-based filtering to understand **context and intent**.
 
-An intelligent internship discovery platform built with the **MERN Stack** and **Google Gemini**. This system uses Generative AI to perform semantic matching between student profiles and internship opportunities, going beyond simple keyword matching to understand context and intent.
+---
 
-## 🏗️ Tech Stack
+## 🛠️ Tech Stack
 
-- **Frontend:** React.js (Vite), Tailwind CSS, Axios
-- **Backend:** Node.js, Express.js
-- **AI Engine:** Google Gemini Pro Model (for semantic analysis & matching)
-- **Database:** MongoDB Atlas
-- **Authentication:** JWT (JSON Web Tokens) + Bcrypt
-- **Email Service:** Nodemailer (Gmail SMTP)
-- **Deployment:** Vercel (Frontend) & Render (Backend)
+- **Frontend:** React.js (Vite), Tailwind CSS, Axios  
+- **Backend:** Node.js, Express.js  
+- **AI Engine:** Google Gemini (Semantic Analysis & Matching)  
+- **Database:** MongoDB Atlas  
+- **Authentication:** JWT (JSON Web Tokens) + Bcrypt  
+- **Deployment:** Vercel (Frontend) & Render (Backend)  
+
+---
 
 ## 🚀 Key Features
 
-- **🧠 Semantic Matching:** Uses Google Gemini to analyze resumes/skills and match them with internship descriptions based on meaning.
-- **🔐 Secure Authentication:** Role-based login (Student/Admin) with hashed passwords.
-- **📧 Email Verification:** Account activation system using unique token links.
-- **⚡ Admin Dashboard:** Interface for recruiters/admins to post internships.
-- **📱 Responsive UI:** Dark-themed, mobile-friendly interface.
+- **🧠 Semantic Matching:** Uses Google Gemini to intelligently match skills with internship descriptions  
+- **🔐 Secure Authentication:** Role-based login (Student/Admin) with hashed passwords  
+- **🧑‍💼 Admin Dashboard:** Admins can manage and post internships  
+- **📱 Responsive UI:** Dark-themed, mobile-friendly interface  
+
 
 ## 📂 Project Structure
 
@@ -50,15 +52,18 @@ The repository is organized into a monorepo structure separating the client and 
 
 ## ⚙️ Environment Setup
 
-Create a `.env` file in your **backend** folder with the following keys:
+Create a `.env` file inside the **backend** directory with the following variables:
 
 ```env
 PORT=8080
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_random_secret_key
-email=your_email@gmail.com
-password=your_email_app_password
-GEMINI_API_KEY=your_google_gemini_key
+GEMINI_API_KEY=your_google_gemini_api_key
+
+# Admin (auto-created on server start)
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=admin_password
+
 
 # 1. For Local Development:
 BACKEND_URL=http://localhost:8080

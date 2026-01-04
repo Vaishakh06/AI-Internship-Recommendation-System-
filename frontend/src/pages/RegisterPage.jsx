@@ -1,11 +1,10 @@
-// src/pages/RegisterPage.jsx
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
-// ✅ 1. Define your Backend URL here (so it's easy to change later)
-// Copy this from your ngrok terminal (http 8080)
-const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+// Backend URL
+const BACKEND_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -33,23 +32,26 @@ const RegisterPage = () => {
     try {
       setLoading(true);
 
-      // ✅ 2. CHANGED: Use the public ngrok URL instead of localhost
-      const res = await axios.post(`${BACKEND_URL}/api/auth/register`, formData);
+      const res = await axios.post(
+        `${BACKEND_URL}/api/auth/register`,
+        formData
+      );
 
       setStatus({
         type: "success",
         message:
           res.data?.message ||
-          "Registration successful! Check your email to verify your account.",
+          "Registration successful! You can now log in.",
       });
 
       setTimeout(() => {
         navigate("/login");
-      }, 3000);
+      }, 2000);
     } catch (err) {
-      console.error("Signup Error:", err); // Helpful for debugging
+      console.error("Signup Error:", err);
       const msg =
-        err.response?.data?.message || "Registration failed. Try again later.";
+        err.response?.data?.message ||
+        "Registration failed. Try again later.";
       setStatus({ type: "error", message: msg });
     } finally {
       setLoading(false);
@@ -68,7 +70,9 @@ const RegisterPage = () => {
 
         {status.message && (
           <div
-            className={`text-center mb-4 ${status.type === "error" ? "text-red-500" : "text-green-400"
+            className={`text-center mb-4 ${status.type === "error"
+                ? "text-red-500"
+                : "text-green-400"
               }`}
           >
             {status.message}
