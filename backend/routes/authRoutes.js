@@ -49,7 +49,7 @@ router.post("/register", async (req, res) => {
 
         // 4. ✅ Send email using Resend
         try {
-            await sendVerificationEmail(email, verifyLink);
+            await sendVerificationEmail(email, verifyUrl);
         } catch (err) {
             console.error("❌ Email sending failed:", err);
             return res.status(500).json({ message: "Email sending failed" });
