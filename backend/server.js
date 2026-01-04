@@ -1,3 +1,5 @@
+console.log("🔥 SERVER FILE FROM BACKEND FOLDER LOADED");
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
