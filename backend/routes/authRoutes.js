@@ -48,7 +48,12 @@ router.post("/register", async (req, res) => {
         const verifyUrl = `${BACKEND_URL}/api/auth/verify/${activationToken}`;
 
         // 4. ✅ Send email using Resend
-        await sendVerificationEmail(email, verifyUrl);
+        try {
+            await sendVerificationEmail(email, verifyLink);
+        } catch (err) {
+            console.error("❌ Email sending failed:", err);
+            return res.status(500).json({ message: "Email sending failed" });
+        }
 
         // 5. Response (no DB save yet)
         return res.status(200).json({
@@ -124,6 +129,25 @@ router.get("/verify/:token", async (req, res) => {
     }
 });
 
+router.get("/resend-test", async (req, res) => {
+    try {
+        console.log("🔑 Key exists:", !!process.env.RESEND_API_KEY);
+
+        await resend.emails.send({
+            from: "InternDesk <onboarding@resend.dev>",
+            to: "YOUR_PERSONAL_EMAIL@gmail.com",
+            subject: "Resend Test",
+            html: "<h1>Resend is working</h1>",
+        });
+
+        res.send("Email sent");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err.message);
+    }
+});
+
+
 /* ======================================================
    3️⃣ LOGIN (Standard)
 ====================================================== */
@@ -161,5 +185,7 @@ router.post("/login", async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 });
+
+
 
 export default router;
