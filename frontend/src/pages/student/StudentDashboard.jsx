@@ -30,99 +30,81 @@ const EmptyState = ({ message }) => (
   </div>
 );
 
-const InternshipCard = ({ internship, onViewDetails, isApplied }) => (
-  <div className="bg-[#1f2937] p-6 rounded-xl border border-gray-700 shadow-lg hover:scale-[1.02] transition-transform">
-    <h3 className="text-xl font-bold text-yellow-400 mb-1">
-      {internship.program}
-    </h3>
-
-    <p className="text-gray-300 font-medium mb-2">
-      {internship.organization}
-    </p>
-
-    <div className="text-sm text-gray-400 space-y-1 mb-4">
-      <p><strong>Location:</strong> {internship.location}</p>
-      <p><strong>Stipend:</strong> {internship.stipend || "N/A"}</p>
-    </div>
-
-    <div className="flex justify-between items-center">
-      <button
-        onClick={() => onViewDetails(internship)}
-        className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg"
-      >
-        View Details
-      </button>
-
-      {isApplied && (
-        <span className="text-green-500 font-semibold">✓ Applied</span>
-      )}
-    </div>
-  </div>
-);
-
 /* =======================
    Modal
 ======================= */
 
-const InternshipModal = ({ internship, onClose, onApply, isApplied }) => (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
-    onClick={onClose}
-  >
+const InternshipModal = ({ internship, onClose, onApply, isApplied, showMatched }) => {
+  if (!internship) return null;
+
+  return (
     <div
-      className="bg-gray-800 p-8 rounded-lg max-w-lg w-full border border-gray-700"
-      onClick={(e) => e.stopPropagation()}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+      onClick={onClose}
     >
-      <h2 className="text-3xl font-bold text-yellow-400 mb-3">
-        {internship.program || internship.title}
-      </h2>
+      <div
+        className="bg-gray-800 p-8 rounded-lg max-w-lg w-full border border-gray-700"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-3xl font-bold text-yellow-400 mb-3">
+          {internship.program || internship.title}
+        </h2>
 
-      <p className="text-xl text-gray-300 mb-4">
-        {internship.organization || internship.company}
-      </p>
-
-      <p className="text-gray-400 mb-2">
-        <strong>Location:</strong> {internship.location}
-      </p>
-
-      {/* ✅ SHOW SKILLS MATCHED ONLY FOR RECOMMENDATIONS */}
-      {internship.skillsMatched ? (
-        <p className="text-gray-400 mb-4">
-          <strong>Skills Matched:</strong>{" "}
-          {internship.skillsMatched.length > 0
-            ? internship.skillsMatched.join(", ")
-            : "N/A"}
+        <p className="text-xl text-gray-300 mb-4">
+          {internship.organization || internship.company}
         </p>
-      ) : (
-        <p className="text-gray-400 mb-4">
-          <strong>Skills Required:</strong>{" "}
-          {internship.skillsRequired?.join(", ") || "Not specified"}
+
+        <p className="text-gray-400 mb-2">
+          <strong>Location:</strong> {internship.location || "N/A"}
         </p>
-      )}
 
-      <div className="flex justify-between items-center">
-        <button
-          onClick={onClose}
-          className="bg-gray-600 hover:bg-gray-700 px-5 py-2 rounded"
-        >
-          Close
-        </button>
-
-        {isApplied ? (
-          <span className="text-green-500 font-semibold">✓ Applied</span>
-        ) : (
-          <button
-            onClick={() => onApply(internship._id)}
-            className="bg-yellow-500 hover:bg-yellow-600 text-black px-5 py-2 rounded font-semibold"
-          >
-            Apply Now
-          </button>
+        {/* ONLY FOR RECOMMENDED */}
+        {showMatched && (
+          <p className="text-gray-400 mb-2">
+            <strong>Skills Matched:</strong>{" "}
+            {Array.isArray(internship.skillsMatched) &&
+              internship.skillsMatched.length > 0
+              ? internship.skillsMatched.join(", ")
+              : "N/A"}
+          </p>
         )}
+
+        {/* ONLY FOR ALL OPPORTUNITIES */}
+        {!showMatched && (
+          <p className="text-gray-400 mb-2">
+            <strong>Required Skills:</strong>{" "}
+            {Array.isArray(internship.skillsRequired) &&
+              internship.skillsRequired.length > 0
+              ? internship.skillsRequired.join(", ")
+              : "N/A"}
+          </p>
+        )}
+
+        <div className="flex justify-between items-center mt-6">
+          <button
+            onClick={onClose}
+            className="bg-gray-600 hover:bg-gray-700 px-5 py-2 rounded"
+          >
+            Close
+          </button>
+
+          {isApplied ? (
+            <span className="text-green-500 font-semibold">✓ Applied</span>
+          ) : (
+            internship._id && (
+              <button
+                onClick={() => onApply(internship._id)}
+                className="bg-yellow-500 hover:bg-yellow-600 text-black px-5 py-2 rounded font-semibold"
+              >
+                Apply Now
+              </button>
+            )
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
-
+  );
+};
 
 /* =======================
    Main Component
@@ -158,9 +140,9 @@ const StudentDashboard = () => {
           }),
         ]);
 
-        setRecommendations(recs.data.recommendations || []);
-        setAllInternships(all.data || []);
-        setAppliedInternships(applied.data || []);
+        setRecommendations((recs.data?.recommendations || []).filter(Boolean));
+        setAllInternships((all.data || []).filter(Boolean));
+        setAppliedInternships((applied.data || []).filter(Boolean));
       } catch (err) {
         console.error("Error fetching internships:", err);
       } finally {
@@ -173,6 +155,8 @@ const StudentDashboard = () => {
 
   /* ---------- Apply ---------- */
   const handleApply = async (internshipId) => {
+    if (!internshipId) return;
+
     try {
       await API.post(
         `/api/internships/${internshipId}/apply`,
@@ -184,7 +168,7 @@ const StudentDashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setAppliedInternships(res.data);
+      setAppliedInternships((res.data || []).filter(Boolean));
       setSelectedInternship(null);
       alert("Application successful!");
     } catch (err) {
@@ -199,9 +183,7 @@ const StudentDashboard = () => {
   /* ---------- Render ---------- */
   return (
     <div>
-      <h1 className="text-4xl font-bold mb-8">
-        Welcome {user?.email}
-      </h1>
+      <h1 className="text-4xl font-bold mb-8">Welcome {user?.email}</h1>
 
       {/* Tabs */}
       <div className="flex space-x-8 border-b border-gray-700 mb-8 text-lg">
@@ -229,96 +211,103 @@ const StudentDashboard = () => {
         <p className="text-gray-400">Loading...</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Recommended */}
+          {/* RECOMMENDED */}
           {activeTab === "recommended" &&
             (recommendations.length > 0 ? (
-              recommendations.map((internship) => (
-                <div
-                  key={internship._id || internship.title}
-                  className="bg-[#1f2937] p-6 rounded-xl border border-gray-700 shadow-lg"
-                >
-                  <h3 className="text-xl font-bold text-yellow-400 mb-1">
-                    {internship.title}
-                  </h3>
-
-                  <p className="text-gray-300 mb-2">
-                    {internship.company}
-                  </p>
-
-                  <div className="text-sm text-gray-400 space-y-1 mb-4">
-                    <p><strong>Location:</strong> {internship.location}</p>
-                    <p><strong>Match Score:</strong> {internship.matchScore}%</p>
-                    <p>
-                      <strong>Skills:</strong>{" "}
-                      {(internship.skillsMatched || []).join(", ")}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <button
-                      onClick={() => setSelectedInternship(internship)}
-                      className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
+              recommendations.map(
+                (internship) =>
+                  internship && (
+                    <div
+                      key={internship._id || internship.title}
+                      className="bg-[#1f2937] p-6 rounded-xl border border-gray-700"
                     >
-                      View Details
-                    </button>
+                      <h3 className="text-xl font-bold text-yellow-400 mb-1">
+                        {internship.title}
+                      </h3>
+                      <p className="text-gray-300 mb-2">
+                        {internship.company}
+                      </p>
+                      <p className="text-gray-400 text-sm mb-4">
+                        Match Score: {internship.matchScore || 0}%
+                      </p>
 
-                    {internship._id && (
                       <button
-                        onClick={() => handleApply(internship._id)}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded font-semibold"
+                        onClick={() => setSelectedInternship(internship)}
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded"
                       >
-                        Apply
+                        View Details
                       </button>
-                    )}
-                  </div>
-                </div>
-              ))
+                    </div>
+                  )
+              )
             ) : (
               <EmptyState message="No recommendations found yet." />
             ))}
 
-          {/* Applied */}
+          {/* APPLIED */}
           {activeTab === "applied" &&
             (appliedInternships.length > 0 ? (
-              appliedInternships.map((internship) => (
-                <InternshipCard
-                  key={internship._id}
-                  internship={internship}
-                  onViewDetails={setSelectedInternship}
-                  isApplied={true}
-                />
-              ))
+              appliedInternships.map(
+                (internship) =>
+                  internship && (
+                    <div
+                      key={internship._id}
+                      className="bg-[#1f2937] p-6 rounded-xl border border-gray-700"
+                    >
+                      <h3 className="text-xl text-yellow-400">
+                        {internship.program}
+                      </h3>
+                      <p className="text-green-500 font-semibold mt-2">
+                        ✓ Applied
+                      </p>
+                    </div>
+                  )
+              )
             ) : (
-              <EmptyState message="You haven't applied to any internships yet." />
+              <EmptyState message="You haven't applied yet." />
             ))}
 
-          {/* All */}
+          {/* ALL */}
           {activeTab === "all" &&
-            (allInternships.filter(i => i.status === "approved").length > 0 ? (
+            (allInternships.filter((i) => i?.status === "approved").length >
+              0 ? (
               allInternships
-                .filter(i => i.status === "approved")
-                .map((internship) => (
-                  <InternshipCard
-                    key={internship._id}
-                    internship={internship}
-                    onViewDetails={setSelectedInternship}
-                    isApplied={appliedIds.includes(internship._id)}
-                  />
-                ))
+                .filter((i) => i?.status === "approved")
+                .map(
+                  (internship) =>
+                    internship && (
+                      <div
+                        key={internship._id}
+                        className="bg-[#1f2937] p-6 rounded-xl border border-gray-700"
+                      >
+                        <h3 className="text-xl text-yellow-400">
+                          {internship.program}
+                        </h3>
+
+                        <button
+                          onClick={() => setSelectedInternship(internship)}
+                          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 mt-4 rounded"
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    )
+                )
             ) : (
-              <EmptyState message="No internships are available." />
+              <EmptyState message="No internships available." />
             ))}
         </div>
       )}
 
-      <InternshipModal
-        internship={selectedInternship}
-        activeTab={activeTab}
-        onClose={() => setSelectedInternship(null)}
-        onApply={handleApply}
-        isApplied={appliedIds.includes(selectedInternship._id)}
-      />
-
+      {selectedInternship && (
+        <InternshipModal
+          internship={selectedInternship}
+          onClose={() => setSelectedInternship(null)}
+          onApply={handleApply}
+          isApplied={appliedIds.includes(selectedInternship?._id)}
+          showMatched={activeTab === "recommended"}
+        />
+      )}
     </div>
   );
 };
