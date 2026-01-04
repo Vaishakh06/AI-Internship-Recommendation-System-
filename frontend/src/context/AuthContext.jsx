@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      // ✅ 2. CHANGED: Use the public ngrok URL instead of localhost
+
       const res = await axios.post(`${BACKEND_URL}/api/auth/login`, {
         email,
         password,

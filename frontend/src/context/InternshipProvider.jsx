@@ -12,7 +12,7 @@ export const InternshipProvider = ({ children }) => {
   const fetchInternships = async () => {
     try {
       setLoading(true);
-      // --- THIS IS THE FIX ---
+      
       // Change the URL to the public-facing "list" route
       const res = await axios.get("http://localhost:8080/api/internships/list");
       setInternships(res.data || []);
@@ -23,9 +23,7 @@ export const InternshipProvider = ({ children }) => {
     }
   };
 
-  // Note: addInternship and deleteInternship shouldn't be in this public
-  // provider, as only admins can do this. They should be in AdminDashboard.jsx
-  // but we can leave them for now.
+  
   const addInternship = async (data) => {
     // ... (this function won't work without a token) ...
   };

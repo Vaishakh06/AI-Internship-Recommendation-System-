@@ -29,7 +29,8 @@
     "mongodb": "^4.17.2",
     "mongoose": "^8.18.0",
     "nodemailer": "^7.0.10",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "resend": "^6.6.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
