@@ -1,5 +1,3 @@
-// backend/routes/authRoutes.js
-
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -8,13 +6,12 @@ import { sendVerificationEmail } from "../utils/emailService.js";
 
 const router = express.Router();
 
-// ✅ Deployment-Ready URLs
+// ✅ Deployment-ready URLs
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8080";
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 /* ======================================================
    1️⃣ REGISTER (NO DB SAVE YET)
-   Generates a token containing the user data and sends email.
 ====================================================== */
 router.post("/register", async (req, res) => {
     try {
@@ -31,7 +28,7 @@ router.post("/register", async (req, res) => {
         // 2. Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 3. Create activation token (temporary storage)
+        // 3. Create activation token (temporary data)
         const tokenPayload = {
             fullName,
             email,
@@ -47,27 +44,30 @@ router.post("/register", async (req, res) => {
 
         const verifyUrl = `${BACKEND_URL}/api/auth/verify/${activationToken}`;
 
-        // 4. ✅ Send email using Resend
-        try {
-            await sendVerificationEmail(email, verifyUrl);
-        } catch (err) {
-            console.error("❌ Email sending failed:", err);
-            return res.status(500).json({ message: "Email sending failed" });
+        // 4. Send verification email (IMPORTANT FIX)
+        const emailSent = await sendVerificationEmail(email, verifyUrl);
+
+        if (!emailSent) {
+            return res.status(500).json({
+                message: "Failed to send verification email. Please try again.",
+            });
         }
 
-        // 5. Response (no DB save yet)
+        // 5. Success response (NO DB SAVE YET)
         return res.status(200).json({
             message:
-                "Verification link sent! Check your email to complete registration.",
+                "Verification link sent! Please check your email to complete registration.",
         });
     } catch (err) {
         console.error("❌ Registration error:", err);
-        res.status(500).json({ message: "Server error during registration" });
+        return res.status(500).json({
+            message: "Server error during registration",
+        });
     }
 });
 
 /* ======================================================
-   2️⃣ VERIFY & CREATE USER (DB SAVE HAPPENS HERE)
+   2️⃣ VERIFY EMAIL & CREATE USER
 ====================================================== */
 router.get("/verify/:token", async (req, res) => {
     try {
@@ -78,20 +78,20 @@ router.get("/verify/:token", async (req, res) => {
         let decoded;
         try {
             decoded = jwt.verify(token, process.env.JWT_SECRET);
-        } catch (e) {
+        } catch (err) {
             return res
                 .status(400)
-                .send("<h1>⚠️ Invalid or Expired Link. Please register again.</h1>");
+                .send("<h1>⚠️ Invalid or expired verification link.</h1>");
         }
 
         const { fullName, email, password, role } = decoded;
 
-        // 2. Prevent double creation
+        // 2. Prevent duplicate creation
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(200).send(`
-        <h1>✅ Account Already Active</h1>
-        <p>You can already log in.</p>
+        <h1>✅ Account Already Verified</h1>
+        <p>You can log in directly.</p>
         <a href="${loginLink}">Go to Login</a>
       `);
         }
@@ -106,17 +106,20 @@ router.get("/verify/:token", async (req, res) => {
         });
 
         await newUser.save();
-        console.log(`✅ New User Created: ${email}`);
+        console.log(`✅ User verified & created: ${email}`);
 
         // 4. Success page
         return res.status(200).send(`
       <html>
-        <body style="background:#1a1a1a; color:white; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh;">
-          <div style="text-align:center; padding:40px; border-radius:10px; background:#222;">
-            <div style="font-size:50px;">🎉</div>
-            <h1 style="color:#4CAF50;">Account Created!</h1>
+        <body style="background:#1a1a1a;color:white;font-family:sans-serif;
+                     display:flex;justify-content:center;align-items:center;height:100vh;">
+          <div style="text-align:center;padding:40px;border-radius:10px;background:#222;">
+            <div style="font-size:48px;">🎉</div>
+            <h1 style="color:#4CAF50;">Account Verified!</h1>
             <p>Your registration is complete.</p>
-            <a href="${loginLink}" style="background:#E9CD5F; color:black; padding:12px 25px; text-decoration:none; font-weight:bold; border-radius:5px;">
+            <a href="${loginLink}"
+               style="background:#E9CD5F;color:black;padding:12px 24px;
+                      text-decoration:none;font-weight:bold;border-radius:5px;">
               Go to Login
             </a>
           </div>
@@ -124,42 +127,26 @@ router.get("/verify/:token", async (req, res) => {
       </html>
     `);
     } catch (err) {
-        console.error("Verification error:", err);
-        res.status(500).send("Server Error");
+        console.error("❌ Verification error:", err);
+        return res.status(500).send("Server error");
     }
 });
-
-router.get("/resend-test", async (req, res) => {
-    try {
-        console.log("🔑 Key exists:", !!process.env.RESEND_API_KEY);
-
-        await resend.emails.send({
-            from: "InternDesk <onboarding@resend.dev>",
-            to: "YOUR_PERSONAL_EMAIL@gmail.com",
-            subject: "Resend Test",
-            html: "<h1>Resend is working</h1>",
-        });
-
-        res.send("Email sent");
-    } catch (err) {
-        console.error(err);
-        res.status(500).send(err.message);
-    }
-});
-
 
 /* ======================================================
-   3️⃣ LOGIN (Standard)
+   3️⃣ LOGIN
 ====================================================== */
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user)
+            return res.status(404).json({ message: "User not found" });
 
         if (!user.isVerified) {
-            return res.status(403).json({ message: "Account not verified." });
+            return res
+                .status(403)
+                .json({ message: "Please verify your email first." });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
@@ -172,7 +159,7 @@ router.post("/login", async (req, res) => {
             { expiresIn: "1d" }
         );
 
-        res.status(200).json({
+        return res.status(200).json({
             token,
             user: {
                 id: user._id,
@@ -182,10 +169,9 @@ router.post("/login", async (req, res) => {
             },
         });
     } catch (err) {
-        res.status(500).json({ message: "Server error" });
+        console.error("❌ Login error:", err);
+        return res.status(500).json({ message: "Server error" });
     }
 });
-
-
 
 export default router;
