@@ -6,9 +6,8 @@ import { useInternships } from "../../context/useInternships";
 import { useAuth } from "../../context/AuthContext.jsx";
 import AddInternship from "./AddInternship";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../../utils/api";
 
-const API_BASE = "http://localhost:8080/api/internships";
 
 const AllInternships = ({ selectedOption }) => {
   return <ShowSettingsContent selectedOption={selectedOption} />;
@@ -27,12 +26,14 @@ const ShowSettingsContent = ({ selectedOption }) => {
       try {
         const endpoint =
           user?.role === "admin"
-            ? `${API_BASE}/` // admin → get all
-            : `${API_BASE}/list`; // student → get approved only
+            ? "/api/internships"
+            : "/api/internships/list";
 
-        const res = await axios.get(endpoint, {
+        const res = await API.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
+
 
         const data = Array.isArray(res.data)
           ? res.data
