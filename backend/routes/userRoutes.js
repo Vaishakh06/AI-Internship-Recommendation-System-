@@ -1,25 +1,16 @@
-// backend/routes/userRoutes.js
-import express from 'express';
-console.log("✅ userRoutes loaded");
-import { authMiddleware } from '../middlewares/authMiddleware.js';
-import { getUserProfile, updateUserProfile } from '../controllers/userController.js';
+import express from "express";
+import { getUserProfile, updateUserProfile } from "../controllers/userController.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// @route   GET /api/users/profile
-// @desc    Get current user's profile
-router.get(
-  '/profile',
-  authMiddleware, // Protect this route
-  getUserProfile
-);
+// TEST LOG (must appear in Render logs)
+console.log("✅ userRoutes loaded");
 
-// @route   POST /api/users/profile
-// @desc    Update current user's profile
-router.post(
-  '/profile',
-  authMiddleware, // Protect this route
-  updateUserProfile
-);
+// GET profile
+router.get("/profile", authMiddleware, getUserProfile);
+
+// UPDATE profile
+router.put("/profile", authMiddleware, updateUserProfile);
 
 export default router;
