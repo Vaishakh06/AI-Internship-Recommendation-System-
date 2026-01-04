@@ -1,5 +1,6 @@
 // backend/routes/userRoutes.js
 import express from 'express';
+console.log("✅ userRoutes loaded");
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { getUserProfile, updateUserProfile } from '../controllers/userController.js';
 
