@@ -192,7 +192,9 @@ const StudentDashboard = () => {
     }
   };
 
-  const appliedIds = appliedInternships.map((i) => i._id);
+  const appliedIds = appliedInternships
+    .filter((i) => i && i._id)
+    .map((i) => i._id);
 
   /* ---------- Render ---------- */
   return (
