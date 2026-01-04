@@ -21,15 +21,6 @@ const UserSchema = new mongoose.Schema({
   bio: { type: String, default: '' },
   skills: [{ type: String }],
 
-  isVerified: {
-    type: Boolean,
-    default: false, // becomes true after email verification
-  },
-  verificationToken: {
-    type: String,
-    default: null, // random token sent via email
-  },
-
   education: {
     university: { type: String, default: '' },
     degree: { type: String, default: '' },
@@ -46,7 +37,6 @@ const UserSchema = new mongoose.Schema({
   portfolioLink: { type: String, default: '' },
   resumeLink: { type: String, default: '' },
 
-  // 🧩 ADD THIS: To track internships the student applied for
   appliedInternships: [
     {
       type: mongoose.Schema.Types.ObjectId,
