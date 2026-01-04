@@ -77,20 +77,6 @@ const AdminDashboard = () => {
   }, [token]);
 
   /* ---------- Actions ---------- */
-  const handleStatusChange = async (id, status) => {
-    try {
-      await API.put(
-        `/api/internships/${id}/status`,
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      toast.success(`Internship ${status}`);
-      fetchInternships();
-    } catch {
-      toast.error("Action failed");
-    }
-  };
-
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this internship?")) return;
     try {
@@ -180,18 +166,6 @@ const AdminDashboard = () => {
                 className="bg-blue-600 px-3 py-1 rounded text-sm"
               >
                 Applicants
-              </button>
-              <button
-                onClick={() => handleStatusChange(internship._id, "approved")}
-                className="bg-green-600 px-3 py-1 rounded text-sm"
-              >
-                Approve
-              </button>
-              <button
-                onClick={() => handleStatusChange(internship._id, "rejected")}
-                className="bg-gray-600 px-3 py-1 rounded text-sm"
-              >
-                Reject
               </button>
               <button
                 onClick={() => handleDelete(internship._id)}
