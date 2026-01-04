@@ -64,7 +64,7 @@ const InternshipCard = ({ internship, onViewDetails, isApplied }) => (
    Modal
 ======================= */
 
-const InternshipModal = ({ internship, onClose, onApply, isApplied }) => (
+const InternshipModal = ({ internship, activeTab, onClose, onApply, isApplied }) => (
   <div
     className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
     onClick={onClose}
@@ -86,14 +86,23 @@ const InternshipModal = ({ internship, onClose, onApply, isApplied }) => (
       </p>
 
       <p className="text-gray-400 mb-4">
-        <p>
-          <strong>Skills Matched:</strong>{" "}
-          {(internship.skillsMatched && internship.skillsMatched.length > 0)
-            ? internship.skillsMatched.join(", ")
-            : "N/A"}
-        </p>
-
+        {activeTab === "recommended" ? (
+          <>
+            <strong>Skills Matched:</strong>{" "}
+            {internship.skillsMatched?.length
+              ? internship.skillsMatched.join(", ")
+              : "N/A"}
+          </>
+        ) : (
+          <>
+            <strong>Skills Required:</strong>{" "}
+            {internship.skillsRequired?.length
+              ? internship.skillsRequired.join(", ")
+              : "Not specified"}
+          </>
+        )}
       </p>
+
 
       <div className="flex justify-between items-center">
         <button
@@ -303,14 +312,14 @@ const StudentDashboard = () => {
         </div>
       )}
 
-      {selectedInternship && (
-        <InternshipModal
-          internship={selectedInternship}
-          onClose={() => setSelectedInternship(null)}
-          onApply={handleApply}
-          isApplied={appliedIds.includes(selectedInternship._id)}
-        />
-      )}
+      <InternshipModal
+        internship={selectedInternship}
+        activeTab={activeTab}
+        onClose={() => setSelectedInternship(null)}
+        onApply={handleApply}
+        isApplied={appliedIds.includes(selectedInternship._id)}
+      />
+
     </div>
   );
 };
