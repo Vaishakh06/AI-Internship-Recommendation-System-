@@ -73,9 +73,9 @@ const InternshipModal = ({ internship, onClose, onApply, isApplied, showMatched 
         {!showMatched && (
           <p className="text-gray-400 mb-2">
             <strong>Required Skills:</strong>{" "}
-            {Array.isArray(internship.skillsRequired) &&
-              internship.skillsRequired.length > 0
-              ? internship.skillsRequired.join(", ")
+            {Array.isArray(internship.skills) &&
+              internship.skills.length > 0
+              ? internship.skills.join(", ")
               : "N/A"}
           </p>
         )}
